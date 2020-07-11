@@ -1,0 +1,66 @@
+function init(self)
+	msg.post(".", "acquire_input_focus")
+
+	self.game_over_nodde = gui.get_node("gameover")
+	self.points_node = gui.get_node("points")
+	self.main_menu_btn = gui.get_node("main_menu/button")
+	self.try_agin_btn = gui.get_node("try_again/button")
+
+	local game_over_pos = gui.get_position(self.game_over_nodde)
+	game_over_pos.y = 1000
+	gui.set_position(self.game_over_nodde, game_over_pos)
+
+	local points_pos = gui.get_position(self.points_node)
+	points_pos.y = 1000
+	gui.set_position(self.points_node, points_pos)
+
+	local main_menu_pos = gui.get_position(self.main_menu_btn)
+	main_menu_pos.y = -200
+	gui.set_position(self.main_menu_btn, main_menu_pos)
+
+	local try_agin_pos = gui.get_position(self.try_agin_btn)
+	try_agin_pos.y = -200
+	gui.set_position(self.try_agin_btn, try_agin_pos)
+
+	gui.animate(self.game_over_nodde, "position.y", 692, gui.EASING_OUTSINE, 1.5)
+	gui.animate(self.points_node, "position.y", 578, gui.EASING_OUTSINE, 1.5)
+
+	gui.animate(self.main_menu_btn, "position.y", 275, gui.EASING_OUTSINE, 1)
+	gui.animate(self.try_agin_btn, "position.y", 275, gui.EASING_OUTSINE, 1)
+
+end
+
+
+function update(self, dt)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("gameover") then
+		gui.set_text(self.points_node, message.highscore .. " Points")
+	end
+end
+
+
+function on_input(self, action_id, action) 
+	if action_id == hash("touch") and action.pressed then
+		if gui.pick_node(self.main_menu_btn, action.x, action.y) then
+			pprint("main_menu clicked")
+			msg.post("main:/proxy#loader", "main_menu")
+			hide_animation(self)
+		elseif gui.pick_node(self.try_agin_btn, action.x, action.y) then
+			pprint("try agin clicked")
+			msg.post("main:/proxy#loader", "retry")
+			hide_animation(self)
+		end
+	end
+end
+
+function hide_animation(self) 
+	gui.animate(self.game_over_nodde, "position.y", 1100, gui.EASING_INSINE, 1.5)
+	gui.animate(self.points_node, "position.y", 1000, gui.EASING_INSINE, 1.5)
+	gui.animate(self.main_menu_btn, "position.y", -200, gui.EASING_INSINE, 1)
+	gui.animate(self.try_agin_btn, "position.y", -200, gui.EASING_INSINE, 1)
+	timer.delay(2, false, function ()
+		msg.post("main:/proxy#loader", "unload_gameover")
+	end)
+end

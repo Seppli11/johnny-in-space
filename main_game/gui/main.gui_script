@@ -1,0 +1,79 @@
+local SHIP_TEXTURE_MAP = {
+	left_jet_damage = {ok = {texture = "button", animation="jet"}, warn = { texture = "warning_jet", animation = "anim"}, error ={ texture = "error_jet", animation = "anim"}},
+	right_jet_damage = {ok = {texture = "button", animation="jet"}, warn = { texture = "warning_jet", animation = "anim"}, error ={ texture = "error_jet", animation = "anim"}},
+	left_blaster_damage = {ok = {texture = "button", animation="gun"}, warn = { texture = "warning_gun", animation = "anim"}, error ={ texture = "error_gun", animation = "anim"}},
+	right_blaster_damage = {ok = {texture = "button", animation="gun"}, warn = { texture = "warning_gun", animation = "anim"}, error ={ texture = "error_gun", animation = "anim"}},
+}
+
+local HEALTHBAR_STEPS = 21
+
+function init(self) 
+	self.highscore_node = gui.get_node("highscore")
+	self.healthbar_node = gui.get_node("healthbar")
+
+	self.increment = 10
+	self.highscore = 0
+	self.target_highscore = 0
+
+	self.ship = {left_jet_damage = 0, right_jet_damage = 0, left_blaster_damage = 0, right_blaster_damage = 0}
+end
+
+
+function update(self, dt)
+	if self.highscore < self.target_highscore then
+		self.highscore = self.highscore + self.increment * dt
+	end
+	if self.highscore > self.target_highscore then
+		self.highscore = self.target_highscore
+	end
+	gui.set_text(self.highscore_node, math.floor(self.highscore) .. " Points")
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("set_score") then
+		local points = message.points
+		if points == nil then
+			points = 0
+		end
+		self.target_highscore = points
+		self.increment = (self.target_highscore - self.highscore) / 1
+	elseif message_id == hash("ship_damage") then
+		self.ship = message.ship
+		update_damage_meters(self, self.ship)
+	elseif message_id == hash("lives") then
+		self.player_lives = message.lives
+		update_healthbar(self, self.player_lives, message.max_lives)
+	elseif message_id == hash("gameover") then
+		msg.post("main:/proxy#loader", "gameover", { highscore = self.target_highscore})
+		msg.post("/gui", "disable")
+		msg.post("/spawner#spawner", "disable")
+	end
+end
+
+function update_damage_meters(self, ship)
+	for key, value in pairs(ship) do
+		local node = gui.get_node(key)	
+		if node == nil then
+			error("Couldn't find ship damage node called \"" .. key .. "\"")
+		end
+
+		local texture_info = SHIP_TEXTURE_MAP[key].ok
+		if value == 1 then
+			texture_info = SHIP_TEXTURE_MAP[key].warn
+		elseif value == 2 then
+			texture_info = SHIP_TEXTURE_MAP[key].error
+		end
+
+
+		
+		gui.set_texture(node, texture_info.texture)
+		gui.play_flipbook(node, texture_info.animation)
+	end
+end
+
+function update_healthbar(self, lives, max_lives) 
+	local cursor = (max_lives - lives) / HEALTHBAR_STEPS
+	gui.set_flipbook_cursor(self.healthbar_node, cursor)	
+	pprint("lives: " .. lives .. ", max_lives: " .. max_lives .. ", cursor: " .. cursor .. ", max_steps: " .. HEALTHBAR_STEPS)
+end
+	

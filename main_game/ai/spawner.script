@@ -1,0 +1,35 @@
+go.property("factories", {})
+go.property("difficulty", 1)
+
+local MIN_TIME = 2.0
+local MAX_TIME = 4.0
+
+function get_next_time(self) 
+	return socket.gettime() + math.random(MIN_TIME, MAX_TIME) / self.difficulty
+end
+
+function init(self)
+	self.disable = false
+	self.next_spawned = 0
+end
+
+function update(self, dt)
+	if socket.gettime() > self.next_spawned and not self.disable then	
+		factory.create("#basic_ai", get_random_position(), nil, {})
+		self.next_spawned = get_next_time(self)
+		pprint("spanwend , next in " .. self.next_spawned)
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("disable") then
+		self.disable = true
+	end
+end
+
+
+function get_random_position() 
+	local width, height = window.get_size()
+	local x = math.random(0, width)
+	return vmath.vector3(x, height, 0)
+end

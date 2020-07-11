@@ -1,0 +1,85 @@
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	load_main_menu()
+
+	self.gameover = nil
+	self.unload_callback = nil
+end
+
+function final(self)
+end
+
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("proxy_loaded") then
+		msg.post(sender, "init")
+		msg.post(sender, "enable")
+
+		if self.gameover ~= nil then
+			msg.post("gameover:/gui", "gameover", self.gameover)
+			self.gameover = nil
+		end
+	elseif message_id == hash("proxy_unloaded") then
+		pprint("unloaded proxy")
+		if self.unload_callback ~= nil then
+			local callback = self.unload_callback
+			self.unload_callback = nil
+			pprint("call callback", callback)
+			callback()
+		end
+	elseif message_id == hash("gameover") then
+		load_gameover()
+		self.gameover = message
+	elseif message_id == hash("unload_gameover") then
+		pprint("unlaod gameover")
+		unload_gameover()
+	elseif message_id == hash("unload_main_menu") then
+		unload_main_menu()
+	elseif message_id == hash("retry") then
+		self.unload_callback = function () load_main_game() end
+		unload_main_game(self)
+	elseif message_id == hash("main_menu") then
+		unload_main_game()
+		load_main_menu()
+	elseif message_id == hash("start") then
+		load_main_game()
+	end
+end
+
+function load_main_menu() 
+	load_proxy("#main_menu_proxy")
+end
+
+function unload_main_menu() 
+	pprint("unload mainmenu")
+	unload_proxy("#main_menu_proxy")
+end
+
+function load_main_game() 
+	load_proxy("#game_proxy")
+end
+
+function unload_main_game() 
+	unload_proxy("#game_proxy")
+end
+
+function load_gameover() 
+	load_proxy("#gameover_proxy")
+end
+
+function unload_gameover() 
+	unload_proxy("#gameover_proxy")
+end
+
+
+function load_proxy(proxy) 
+	pprint("load " .. proxy)
+	msg.post(proxy, "load")
+end
+
+function unload_proxy(proxy) 
+	pprint("unload " .. proxy)
+	msg.post(proxy, "disable")	
+	msg.post(proxy, "final")	
+	msg.post(proxy, "unload")	
+end
