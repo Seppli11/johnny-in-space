@@ -1,0 +1,53 @@
+-- amount of hits needed to kill this ai
+go.property("fire_pattern", {})
+
+go.property("points_when_dead", 20)
+
+function init(self)
+	self.speed = 70
+
+
+	if self.fire_pattern == nil or #self.fire_pattern == 0 then
+		self.fire_pattern = {{angle = 0, wait = 1}, {angle = -45, wait = 0}, {angle = 45, wait = 0.5}}
+		--self.fire_pattern = {{angle = 270, wait = 1}, {angle = 0, wait = 0}, {angle = 180, wait = 0.5}}
+	end
+
+	self.pattern_index = 1
+	self.fire_wait = socket.gettime() + self.fire_pattern[#self.fire_pattern].wait
+end
+
+function final(self)
+	msg.post("/highscore_manager", "score", { points = self.points_when_dead})
+end
+
+function update(self, dt)
+	local pos = go.get_position()
+	pos.y = pos.y - self.speed * dt
+	go.set_position(pos)
+
+	if pos.y < 0 then
+		go.delete()
+	end
+
+	local current = socket.gettime()
+	if current > self.fire_wait then
+		local pattern = self.fire_pattern[self.pattern_index]
+
+		--pprint("shoot projectile to " .. pattern.angle .. " (with interval of " .. pattern.wait .. ", index: " .. self.pattern_index .. ")")
+
+		local rad_angle = (pattern.angle + 270) / 180 * math.pi
+
+		local dir = vmath.vector3(math.cos(rad_angle), math.sin(rad_angle), 0)
+		local rot = vmath.quat_rotation_z(rad_angle)
+		local props = { dir = dir }
+		factory.create("#factory", nil, rot, props, 0.5)
+
+		self.fire_wait = current + pattern.wait
+
+		self.pattern_index = self.pattern_index + 1
+		if self.pattern_index > #self.fire_pattern then
+			self.pattern_index = 1
+		end
+	end
+
+end

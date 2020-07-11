@@ -1,0 +1,19 @@
+-- amount of hits needed to kill this ai
+go.property("max_lives", 1)
+
+function init(self)
+	self.lives = self.max_lives
+end
+
+function update(self, dt)
+	if self.lives <= 0 then
+		go.delete()
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("collision_response") then
+		self.lives = self.lives - 1
+		msg.post(".", "damage", {points = -1, lives = self.lives, max_lives = self.max_lives})
+	end
+end

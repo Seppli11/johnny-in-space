@@ -1,0 +1,61 @@
+go.property("tilemap_url", "#map")
+go.property("tilemap_layer", "default")
+go.property("tile_size", 32)
+go.property("max_tiles", 15)
+go.property("speed", 100)
+
+local WIDTH = 1280
+local HEIGHT = 720
+
+function init(self)
+	self.scale = go.get_scale()
+	self.tile_width = math.floor(WIDTH / (self.tile_size * self.scale.x))
+	self.screen_tile_height = math.floor((HEIGHT / (self.tile_size * self.scale.y))) + 1
+	self.tile_height = math.floor(self.screen_tile_height * 3) -- 3x the hight to move the map
+
+	self.last_generated = 0
+
+	generate_screen(self, 1)
+	generate_screen(self, self.screen_tile_height)
+	generate_screen(self, self.screen_tile_height * 2)
+
+	pprint("width: " .. self.tile_width .. ", height: " .. self.tile_height .. ", screen_height: " .. self.screen_tile_height)
+end
+
+function final(self)
+end
+
+function update(self, dt)
+	local pos = go.get_position()
+	local tile_y = math.floor(-pos.y / (self.scale.y * self.tile_size))
+	pos.y = pos.y - self.speed * dt
+	if tile_y == self.screen_tile_height * 2 and self.last_generated ~= tile_y then
+		pprint("reset to y=0" .. ", tile_y: " .. tile_y .. ", pos_y: " .. pos.y)
+		pos.y = 0
+		self.last_generated = tile_y
+		generate_screen(self, self.screen_tile_height + 1)
+	elseif tile_y == self.screen_tile_height and self.last_generated ~= tile_y then
+		generate_screen(self, (self.screen_tile_height * 2) + 1, true)
+		self.last_generated = tile_y
+		pprint("generate screen_height * 2: " .. self.screen_tile_height * 2 .. ", tile_y: " .. tile_y .. ", pos_y: " .. pos.y)
+	end
+	go.set_position(pos)
+
+end
+
+function generate_screen(self, start_y, copy)
+	pprint("generate row: " .. start_y .. ", copy: " .. (copy and "true" or "nil"))
+	for y = start_y,(start_y + self.screen_tile_height) do
+		generate_row(self, y, copy, start_y)	
+	end
+end
+
+function generate_row(self, row_y, copy, copy_down_rows) 
+	for x = 1,self.tile_width do
+		local tile = math.random(1, self.max_tiles)
+		tilemap.set_tile("#map", "layer1", x, row_y, tile)
+		if copy then
+			tilemap.set_tile("#map", "layer1", x, row_y - copy_down_rows, tile)
+		end
+	end
+end

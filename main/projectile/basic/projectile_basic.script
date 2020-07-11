@@ -1,0 +1,26 @@
+go.property("dir", vmath.vector3())
+
+local LIFE_TIME = 10;
+
+function init(self)
+	self.speed = 200
+	self.created_time = socket.gettime()
+end
+
+
+function update(self, dt)
+	local pos = go.get_position()
+	pos = pos + self.dir * self.speed * dt
+	go.set_position(pos)
+
+	local current = socket.gettime()
+	if current - self.created_time > LIFE_TIME then
+		go.delete()
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("collision_response") then
+		go.delete()
+	end
+end
