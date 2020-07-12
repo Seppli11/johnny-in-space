@@ -137,7 +137,7 @@ nodes {
 nodes {
   position {
     x: 351.0
-    y: 275.0
+    y: 97.0
     z: 0.0
     w: 1.0
   }
@@ -206,7 +206,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "button/button"
+  texture: "button/button_pic"
   id: "main_menu/button"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_BOTTOM
@@ -262,7 +262,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "Main Menu"
+  text: "Main Menu (esc)"
   font: "system_font"
   id: "main_menu/text"
   xanchor: XANCHOR_NONE
@@ -296,7 +296,7 @@ nodes {
 nodes {
   position {
     x: 945.0
-    y: 275.0
+    y: 97.0
     z: 0.0
     w: 1.0
   }
@@ -365,7 +365,7 @@ nodes {
   }
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
-  texture: "button/button"
+  texture: "button/button_pic"
   id: "try_again/button"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_BOTTOM
@@ -421,7 +421,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "Try Again"
+  text: "Try Again (space)"
   font: "system_font"
   id: "try_again/text"
   xanchor: XANCHOR_NONE

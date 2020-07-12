@@ -14,12 +14,12 @@ components {
   }
   properties {
     id: "fire_pattern_index"
-    value: "1.0"
+    value: "2.0"
     type: PROPERTY_TYPE_NUMBER
   }
   properties {
     id: "points_when_dead"
-    value: "100.0"
+    value: "300.0"
     type: PROPERTY_TYPE_NUMBER
   }
 }
@@ -56,8 +56,8 @@ components {
 embedded_components {
   id: "sprite"
   type: "sprite"
-  data: "tile_set: \"/main_game/ai/basic/ai_basic.tilesource\"\n"
-  "default_animation: \"idle\"\n"
+  data: "tile_set: \"/main_game/ai/circler/ai_circler.tilesource\"\n"
+  "default_animation: \"anim\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""

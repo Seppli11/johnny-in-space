@@ -7,6 +7,7 @@ end
 
 function update(self, dt)
 	if self.lives <= 0 then
+		msg.post("/explosion", "explosion", { pos = go.get_position()})
 		go.delete()
 	end
 end

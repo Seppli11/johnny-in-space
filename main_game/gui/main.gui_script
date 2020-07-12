@@ -11,6 +11,10 @@ function init(self)
 	self.highscore_node = gui.get_node("highscore")
 	self.healthbar_node = gui.get_node("healthbar")
 
+	self.notification_node = gui.get_node("notification/notification")
+	self.notification_text_node = gui.get_node("notification/text")
+	gui.set_position(self.notification_node, vmath.vector3(665, 1000, 0))
+
 	self.increment = 10
 	self.highscore = 0
 	self.target_highscore = 0
@@ -47,6 +51,10 @@ function on_message(self, message_id, message, sender)
 		msg.post("main:/proxy#loader", "gameover", { highscore = self.target_highscore})
 		msg.post("/gui", "disable")
 		msg.post("/spawner#spawner", "disable")
+	elseif message_id == hash("notify") then
+		gui.animate(self.notification_node, "position.y", 600, gui.EASING_OUTSINE, 1.5)
+		gui.set_text(self.notification_text_node, message.text)
+		timer.delay(5, false, function() gui.animate(self.notification_node, "position.y", 1000, gui.EASING_OUTSINE, 0.7) end)
 	end
 end
 
@@ -64,8 +72,6 @@ function update_damage_meters(self, ship)
 			texture_info = SHIP_TEXTURE_MAP[key].error
 		end
 
-
-		
 		gui.set_texture(node, texture_info.texture)
 		gui.play_flipbook(node, texture_info.animation)
 	end

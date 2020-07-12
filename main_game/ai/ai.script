@@ -1,16 +1,22 @@
 -- amount of hits needed to kill this ai
-go.property("fire_pattern", {})
+
+go.property("fire_pattern_index", 1)
 
 go.property("points_when_dead", 20)
+
+local FIRE_PATTERNS = {
+	{{angle = 0, wait = 1}, {angle = -45, wait = 0}, {angle = 45, wait = 0.5}},
+	{{angle = 0, wait = 0.2}, {angle = 15, wait = 0.2}, {angle = 30, wait = 0.2}, {angle = 45, wait = 0.2}, {angle = 60, wait = 0.2}, 
+		{angle = 75, wait = 0.2}, {angle = 90, wait = 0.2}, {angle = 105, wait = 0.2}, {angle = 120, wait = 0.2}, {angle = 135, wait = 0.2}, 
+		{angle = 150, wait = 0.2}, {angle = 165, wait = 0.2}, {angle = 180, wait = 0.2} }
+}
 
 function init(self)
 	self.speed = 70
 
+	self.fire_pattern = FIRE_PATTERNS[self.fire_pattern_index]
+	pprint(self.fire_pattern_index)
 
-	if self.fire_pattern == nil or #self.fire_pattern == 0 then
-		self.fire_pattern = {{angle = 0, wait = 1}, {angle = -45, wait = 0}, {angle = 45, wait = 0.5}}
-		--self.fire_pattern = {{angle = 270, wait = 1}, {angle = 0, wait = 0}, {angle = 180, wait = 0.5}}
-	end
 
 	self.pattern_index = 1
 	self.fire_wait = socket.gettime() + self.fire_pattern[#self.fire_pattern].wait
@@ -38,9 +44,9 @@ function update(self, dt)
 		local rad_angle = (pattern.angle + 270) / 180 * math.pi
 
 		local dir = vmath.vector3(math.cos(rad_angle), math.sin(rad_angle), 0)
-		local rot = vmath.quat_rotation_z(rad_angle)
+		local rot = vmath.quat_rotation_z(rad_angle + math.pi / 2)
 		local props = { dir = dir }
-		factory.create("#factory", nil, rot, props, 0.5)
+		factory.create("#factory", nil, rot, props, 1)
 
 		self.fire_wait = current + pattern.wait
 

@@ -1,0 +1,3 @@
+function init(self)
+	timer.delay(2, false, function() go.delete() end)
+end

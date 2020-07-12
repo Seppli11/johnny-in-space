@@ -18,6 +18,18 @@ key_trigger {
   input: KEY_LEFT
   action: "left"
 }
+key_trigger {
+  input: KEY_SPACE
+  action: "enter"
+}
+key_trigger {
+  input: KEY_ENTER
+  action: "enter"
+}
+key_trigger {
+  input: KEY_ESC
+  action: "back"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "touch"

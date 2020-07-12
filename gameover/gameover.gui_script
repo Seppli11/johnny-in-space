@@ -44,15 +44,25 @@ end
 function on_input(self, action_id, action) 
 	if action_id == hash("touch") and action.pressed then
 		if gui.pick_node(self.main_menu_btn, action.x, action.y) then
-			pprint("main_menu clicked")
-			msg.post("main:/proxy#loader", "main_menu")
-			hide_animation(self)
+			go_to_main_menu(self)
 		elseif gui.pick_node(self.try_agin_btn, action.x, action.y) then
-			pprint("try agin clicked")
-			msg.post("main:/proxy#loader", "retry")
-			hide_animation(self)
+			retry(self)
 		end
+	elseif action_id == hash("enter") and action.pressed then
+		retry(self)
+	elseif action_id == hash("back") and action.pressed then
+		go_to_main_menu(self)
 	end
+end
+
+function retry(self) 
+	msg.post("main:/proxy#loader", "retry")
+	hide_animation(self)
+end
+
+function go_to_main_menu(self) 
+	msg.post("main:/proxy#loader", "main_menu")
+	hide_animation(self)
 end
 
 function hide_animation(self) 

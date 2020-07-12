@@ -7,8 +7,6 @@ function init(self)
 	self.last_tick = socket.gettime() + 1
 end
 
-function final(self)
-end
 
 function update(self, dt)
 	local current = socket.gettime()
@@ -31,4 +29,19 @@ end
 function add_highscore(self, points) 
 	self.highscore = self.highscore + points
 	msg.post("gui#main", "set_score", { points = self.highscore })
+	local difficulty = calculate_difficulty(self.highscore)
+	msg.post("/spawner#spawner", "difficulty", { difficulty = difficulty })
+end
+
+function calculate_difficulty(highscore) 
+	if highscore <= 500 then
+		return 1
+	elseif highscore <= 1500 then
+		return 2
+	elseif highscore <= 4000 then
+		return 3
+	elseif highscore <= 8000 then
+		return 4
+	end
+	return 5
 end

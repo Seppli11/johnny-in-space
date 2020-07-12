@@ -1,0 +1,27 @@
+function init(self)
+	self.generate_explosion = false
+	self.position = nil
+end
+
+function update(self, dt)
+	if self.generate_explosion then
+		pprint("generating explosion")
+		local pos = self.position
+		generate(self, pos)
+		timer.delay(0.3, false, function() generate(self, pos) end)
+		self.generate_explosion = false
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("explosion") then
+		self.position = message.pos
+		self.generate_explosion = true
+	end
+end
+
+function generate(self, pos) 
+	pos.x = pos.x + math.random(-0.5, 0.5)
+	pos.y = pos.y + math.random(-0.5, 0.5)
+	factory.create("#explosion_factory", pos, nil, nil, 3)
+end

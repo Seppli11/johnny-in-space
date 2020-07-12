@@ -1,5 +1,5 @@
 images {
-  image: "/main_menu/background.png"
+  image: "/main_menu/background_picture.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 margin: 0

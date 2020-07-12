@@ -1,11 +1,22 @@
 animations {
-  id: "basic"
+  id: "player"
   images {
-    image: "/main_game/player/player.png"
+    image: "/main_game/projectile/basic/player_projectile_basic.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   playback: PLAYBACK_LOOP_FORWARD
   fps: 12
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+animations {
+  id: "enemy"
+  images {
+    image: "/main_game/projectile/basic/enemy_projectile_basic.png"
+    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 60
   flip_horizontal: 0
   flip_vertical: 0
 }
